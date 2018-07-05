@@ -161,15 +161,16 @@
   [config]
   (let [{:keys [host username password token consumer-key consumer-secret
                 client-id signing-key]} config
+        jwt-host (str "https://" host)
         params (if signing-key
                  {:grant_type "urn:ietf:params:oauth:grant-type:jwt-bearer"
-                  :assertion  (jwt-token host client-id username signing-key)}
+                  :assertion  (jwt-token jwt-host client-id username signing-key)}
                  {:username username
                   :password (str password token)
                   :client_id consumer-key
                   :client_secret consumer-secret
                   :grant_type "password"})
-        url (str host "/services/oauth2/token")
+        url (str jwt-host "/services/oauth2/token")
         ;; TODO this is just like json-request except the body is form encoded
         request {:method :post
                  :url url
